@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransactionController;
@@ -21,13 +23,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('stripe', [PaymentController::class, 'index']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
-    Route::resource('transactions/subscriptions', SubscriptionController::class);
+    Route::resource('subscriptions', SubscriptionController::class);
+    Route::resource('products', ProductController::class);
     Route::resource('transactions', TransactionController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
