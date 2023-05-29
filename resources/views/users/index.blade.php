@@ -25,12 +25,12 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($users as $user)
-                                        <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->created_at }}</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{{ $user->id }}</td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $user->created_at }}</td>
+                                    </tr>
                                     @empty
 
                                     @endforelse

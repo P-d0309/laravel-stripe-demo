@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
+use App\Http\Requests\ProductRequest;
 use App\Models\StripeProduct;
 use Illuminate\Http\Request;
+use App\Traits\Integration\Stripe;
+use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
+    use Stripe;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('stripe.products.index');
+        $products = StripeProduct::get();
+
+        return view('stripe.products.index', compact('products'));
     }
 
     /**
@@ -26,9 +33,18 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
+        $data = $request->all();
+        $product = $this->createProduct($data);
+        if ($product['status'] == Status::SUCCESS()) {
+            Session::flash('alert.success', $product['message']);
+            return redirect()->route('products.index');
+        } else {
+            Session::flash('alert.error', $product['message']);
+
+            return redirect()->back()->withInput($request->all());
+        }
     }
 
     /**

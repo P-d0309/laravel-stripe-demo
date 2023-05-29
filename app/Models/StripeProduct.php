@@ -10,11 +10,12 @@ class StripeProduct extends Model
     use HasFactory;
 
     public $fillable = [
-        'stripe_id',
+        'product_id',
         'object',
         'active',
         'default_price',
-        'stripe_id',
+        'price_id',
+        'interval',
         'description',
         'metadata',
         'name',

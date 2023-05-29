@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('stripe_products', function (Blueprint $table) {
             $table->id();
-            $table->string('stripe_id');
+            $table->string('product_id');
             $table->string('object');
-            $table->boolean('active');
+            $table->boolean('active')->default(1);
             $table->double('default_price', 10,2)->default(0.00);
-            $table->string('stripe_id');
+            $table->string('price_id');
+            $table->string('interval')->default('yearly');
             $table->text('description')->nullable();
             $table->string('metadata')->nullable();
             $table->string('name')->nullable();

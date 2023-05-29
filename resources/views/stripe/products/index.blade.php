@@ -12,7 +12,29 @@
                     <div class="card-actions justify-end">
                         <a class="btn btn-primary" href="{{ route('products.create') }}">Add Product</a>
                     </div>
+                    @if(session()->has('alert.success') || session()->has('alert.error'))
+                        <x-alert-component/>
+                    @endif
+                    <div class="text-gray-900">
+                        <div class="overflow-x-auto">
+                            <table class="table table-zebra w-full">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Date Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $product)
 
+                                    @empty
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
