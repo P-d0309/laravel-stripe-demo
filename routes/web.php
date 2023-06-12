@@ -31,6 +31,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('subscriptions/checkout/{product_id}', [SubscriptionController::class, 'checkout'])->name('subscriptions.checkout');
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('products', ProductController::class);
     Route::resource('transactions', TransactionController::class);

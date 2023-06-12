@@ -22,13 +22,20 @@
                                     <tr>
                                         <th></th>
                                         <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Date Created</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($products as $product)
-
+                                    <tr>
+                                    <td>{{ $product->product_id }}</td>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->default_price }}</td>
+                                        <td>
+                                            <a class="btn btn-success" href="{{ route('subscriptions.checkout', $product->product_id) }}">Purchase</a>
+                                        </td>
+                                    </tr>
                                     @empty
                                     @endforelse
                                 </tbody>

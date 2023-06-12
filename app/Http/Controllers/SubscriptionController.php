@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StripeProduct;
 use Illuminate\Http\Request;
-
+use App\Traits\Integration\Stripe;
 class SubscriptionController extends Controller
 {
+    use Stripe;
     public function index()
     {
         # code...
@@ -21,8 +23,12 @@ class SubscriptionController extends Controller
         # code...
     }
 
-    public function view()
+    public function checkout(Request $request, $product_id)
     {
-        # code...
+        $stripeProduct = StripeProduct::whereProductId($product_id)->firstOrFail();
+        $paymentIntent = $this->createStripePaymentIntent();
+        dd($paymentIntent);
+        return view('subscription.create', compact('stripeProduct'));
+
     }
 }

@@ -3,17 +3,19 @@ namespace App\Traits\Integration;
 
 use App\Enums\Status;
 use App\Models\StripeProduct;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use Stripe\StripeClient;
 
-trait Stripe {
+trait Stripe
+{
     public $client;
     public function __construct()
     {
         $this->client = new StripeClient(env('STRIPE_PRIVATE_KEY'));
     }
 
-    public function createProduct($data) {
+    public function createProduct($data)
+    {
         // Create a product
         try {
             $client = $this->client;
@@ -41,7 +43,8 @@ trait Stripe {
         }
     }
 
-    public function createPrice($product, $data) {
+    public function createPrice($product, $data)
+    {
         try {
             $client = $this->client;
 
@@ -55,5 +58,32 @@ trait Stripe {
         } catch (\Throwable $th) {
             return ['data' => [], 'status' => Status::ERROR(), 'message' => $th->getMessage()];
         }
+    }
+
+    public function retriveStripeClient()
+    {
+        return $this->client;
+    }
+
+    public function createStripePaymentIntent()
+    {
+        $client = $this->client;
+        $stripe_customer_id = null;
+        $user = Auth::user();
+        $stripe_customer_id = $user->stripe_customer_id;
+        if(!$stripe_customer_id) {
+
+        }
+
+        $paymentIntent = $client->paymentIntents->create([
+            'amount' => 2000,
+            'currency' => 'usd',
+            'automatic_payment_methods' => [
+                'enabled' => true,
+            ],
+            'customer' => $user
+        ]);
+
+        return $paymentIntent;
     }
 }
