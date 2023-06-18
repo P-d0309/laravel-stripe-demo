@@ -23,12 +23,12 @@ class SubscriptionController extends Controller
         # code...
     }
 
-    public function checkout(Request $request, $product_id)
+    public function checkout($product_id)
     {
         $stripeProduct = StripeProduct::whereProductId($product_id)->firstOrFail();
-        $paymentIntent = $this->createStripePaymentIntent();
-        dd($paymentIntent);
-        return view('subscription.create', compact('stripeProduct'));
 
+        $paymentIntent = $this->createStripePaymentIntent($stripeProduct);
+
+        return redirect($paymentIntent->url);
     }
 }

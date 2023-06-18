@@ -56,6 +56,7 @@
                                     </label>
                                     <select class="select select-bordered" name="interval">
                                         <option disabled selected>Pick one</option>
+                                        <option value="one_time">One Time Payment</option>
                                         <option value="day">Daily</option>
                                         <option value="week">Weekly</option>
                                         <option value="month">Monthly</option>

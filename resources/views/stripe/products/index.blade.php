@@ -13,7 +13,7 @@
                         <a class="btn btn-primary" href="{{ route('products.create') }}">Add Product</a>
                     </div>
                     @if(session()->has('alert.success') || session()->has('alert.error'))
-                        <x-alert-component/>
+                    <x-alert-component />
                     @endif
                     <div class="text-gray-900">
                         <div class="overflow-x-auto">
@@ -29,11 +29,12 @@
                                 <tbody>
                                     @forelse ($products as $product)
                                     <tr>
-                                    <td>{{ $product->product_id }}</td>
+                                        <td>{{ $product->product_id }}</td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->default_price }}</td>
                                         <td>
-                                            <a class="btn btn-success" href="{{ route('subscriptions.checkout', $product->product_id) }}">Purchase</a>
+                                            <a class="btn btn-success p-3"
+                                                href="{{ route('subscriptions.checkout', ['product_id' => $product->product_id, 'type' => 'subscription']) }}">Purchase</a>
                                         </td>
                                     </tr>
                                     @empty

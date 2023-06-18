@@ -3,6 +3,7 @@ namespace App\Traits\Integration;
 
 use App\Enums\Status;
 use App\Models\StripeProduct;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Stripe\StripeClient;
 
@@ -43,19 +44,44 @@ trait Stripe
         }
     }
 
+    public function createCustomer(User $user)
+    {
+        // Create a product
+        try {
+            $client = $this->client;
+
+            $customer = $client->customers->create([
+                'description' => 'Created via browser',
+                'name' => $user->name,
+                'email' => $user->email
+            ]);
+            $user->stripe_customer_id = $customer->id;
+            $user->save();
+
+            return ['data' => $user, 'status' => Status::SUCCESS(), 'message' => 'Customer has been added successfully.'];
+
+        } catch (\Throwable $th) {
+            return ['data' => [], 'status' => Status::ERROR(), 'message' => $th->getMessage()];
+        }
+    }
+
     public function createPrice($product, $data)
     {
         try {
             $client = $this->client;
-
-            $price = $client->prices->create([
+            $productPriceData = [
                 'unit_amount' => $data['default_price'],
                 'currency' => 'usd',
-                'recurring' => ['interval' => $data['interval']],
                 'product' => $product['id'],
-            ])->jsonSerialize();
+            ];
+            if($data['interval'] !== 'one_time') {
+
+                $productPriceData['recurring'] = ['interval' => $data['interval']];
+            }
+            $price = $client->prices->create($productPriceData)->jsonSerialize();
             return ['data' => $price, 'status' => Status::SUCCESS(), 'message' => ''];
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             return ['data' => [], 'status' => Status::ERROR(), 'message' => $th->getMessage()];
         }
     }
@@ -65,25 +91,30 @@ trait Stripe
         return $this->client;
     }
 
-    public function createStripePaymentIntent()
+    public function createStripePaymentIntent(StripeProduct $product)
     {
         $client = $this->client;
         $stripe_customer_id = null;
         $user = Auth::user();
         $stripe_customer_id = $user->stripe_customer_id;
         if(!$stripe_customer_id) {
-
+            $user = $this->createCustomer($user);
+            $user = $user['data'];
+            $stripe_customer_id = $user->stripe_customer_id;
         }
-
-        $paymentIntent = $client->paymentIntents->create([
-            'amount' => 2000,
-            'currency' => 'usd',
-            'automatic_payment_methods' => [
-                'enabled' => true,
+        $sessions = $client->checkout->sessions->create([
+            'line_items' => [
+                [
+                    'price' => $product->price_id,
+                    'quantity' => 1,
+                ]
             ],
-            'customer' => $user
+            'mode' => request()->route('type'),
+            'success_url' => 'http://127.0.0.1:8000/subscriptions/checkout/prod_NyuOBS9Af6PEhA',
+            'cancel_url' => 'http://127.0.0.1:8000/subscriptions/checkout/prod_NyuOBS9Af6PEhA',
+            'customer' => $stripe_customer_id
         ]);
 
-        return $paymentIntent;
+        return $sessions;
     }
 }
