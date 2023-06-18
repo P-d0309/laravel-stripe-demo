@@ -23,4 +23,15 @@ class SubscriptionController extends Controller
     {
         return view('stripe.products.status', compact('status'));
     }
+
+    public function webhook (Request $request) {
+        $data = $request->all();
+
+        // Manupulate the data according to the need
+        if ($data['type'] == 'payment_intent.succeeded') {
+
+        } else if ($data['type'] == 'charge.succeeded') {
+
+        }
+    }
 }
