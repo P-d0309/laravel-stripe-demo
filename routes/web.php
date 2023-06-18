@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Status;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -31,6 +32,9 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
+
+    Route::get('subscriptions/{product_id}/status/{type}', [SubscriptionController::class, 'redirectPath'])->name('subscriptions.redirectPath')->whereIn('type', [Status::SUCCESS(), Status::ERROR()]);
+
     Route::get('subscriptions/checkout/{product_id}/{type}', [SubscriptionController::class, 'checkout'])->name('subscriptions.checkout')->whereIn('type' , ['subscription', 'payment']);
 
     Route::resource('subscriptions', SubscriptionController::class);

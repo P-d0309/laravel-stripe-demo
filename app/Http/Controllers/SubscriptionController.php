@@ -8,20 +8,6 @@ use App\Traits\Integration\Stripe;
 class SubscriptionController extends Controller
 {
     use Stripe;
-    public function index()
-    {
-        # code...
-    }
-
-    public function create()
-    {
-        return view('subscription.create');
-    }
-
-    public function store()
-    {
-        # code...
-    }
 
     public function checkout($product_id)
     {
@@ -30,5 +16,11 @@ class SubscriptionController extends Controller
         $paymentIntent = $this->createStripePaymentIntent($stripeProduct);
 
         return redirect($paymentIntent->url);
+    }
+
+
+    public function redirectPath($product_id, $status)
+    {
+        return view('stripe.products.status', compact('status'));
     }
 }

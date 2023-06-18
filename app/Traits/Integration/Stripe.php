@@ -102,6 +102,7 @@ trait Stripe
             $user = $user['data'];
             $stripe_customer_id = $user->stripe_customer_id;
         }
+
         $sessions = $client->checkout->sessions->create([
             'line_items' => [
                 [
@@ -110,8 +111,8 @@ trait Stripe
                 ]
             ],
             'mode' => request()->route('type'),
-            'success_url' => 'http://127.0.0.1:8000/subscriptions/checkout/prod_NyuOBS9Af6PEhA',
-            'cancel_url' => 'http://127.0.0.1:8000/subscriptions/checkout/prod_NyuOBS9Af6PEhA',
+            'success_url' => route('subscriptions.redirectPath', [$product->product_id , Status::SUCCESS()]),
+            'cancel_url' => route('subscriptions.redirectPath', [$product->product_id , Status::ERROR()]),
             'customer' => $stripe_customer_id
         ]);
 

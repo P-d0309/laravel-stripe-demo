@@ -33,8 +33,7 @@
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->default_price }}</td>
                                         <td>
-                                            <a class="btn btn-success p-3"
-                                                href="{{ route('subscriptions.checkout', ['product_id' => $product->product_id, 'type' => 'subscription']) }}">Purchase</a>
+                                            <a class="btn btn-success p-3" href="{{ route('subscriptions.checkout', ['product_id' => $product->product_id, 'type' => $product->interval == 'one_time' ? 'payment' : 'subscription']) }}">{{ $product->interval ==  'one_time' ? 'Purchase' : 'Subscribe' }}</a>
                                         </td>
                                     </tr>
                                     @empty
