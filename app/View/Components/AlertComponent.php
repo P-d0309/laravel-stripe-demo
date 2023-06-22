@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Enums\Status;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Session;
@@ -9,12 +10,21 @@ use Illuminate\View\Component;
 
 class AlertComponent extends Component
 {
-    /**
-     * Create a new component instance.
-     */
+    public string $alertType;
+    public string $alertMessage;
     public function __construct()
     {
-        $error = Session::get('error');
+        $alert = Session::get('alert');
+
+        if(is_array($alert)) {
+            if(array_key_exists(Status::SUCCESS,$alert)) {
+                $this->alertType = 'alert-success';
+                $this->alertMessage = $alert[Status::SUCCESS];
+            } else if(array_key_exists(Status::ERROR, $alert)) {
+                $this->alertType = 'alert-danger';
+                $this->alertMessage = $alert[Status::ERROR];
+            }
+        }
     }
 
     /**

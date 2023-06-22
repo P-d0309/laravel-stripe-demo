@@ -7,6 +7,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if(session()->has('alert.success') || session()->has('alert.error'))
+            <x-alert-component />
+            @endif
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
                     <div class="card-actions justify-end">

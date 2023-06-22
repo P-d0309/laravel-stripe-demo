@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Jobs\CreateStripeCustomer;
 use App\Models\User;
+use App\Traits\Integration\Stripe;
 use Illuminate\Http\Request;
+use Session;
 
 class UserController extends Controller
 {
+    use Stripe;
     /**
      * Display a listing of the resource.
      */
@@ -22,23 +27,27 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
-    }
+        try {
+            //code...
+            $user = User::create($request->all());
+            Session::flash('alert.success', 'User has been added successfully.');
+            // Add customer to the stripe
+            dispatch(new CreateStripeCustomer($user));
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
+            return redirect()->route('users.index');
+        } catch (\Throwable $th) {
+            //throw $th;
+            Session::flash('alert.error', $th->getMessage());
+            return back();
+        }
     }
 
     /**

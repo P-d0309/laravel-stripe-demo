@@ -14,8 +14,8 @@ class CreateStripeCustomer implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stripe;
 
-    public User $user;
-    public function __construct(User $user)
+    public $user;
+    public function __construct($user)
     {
         $this->user = $user;
     }
@@ -25,6 +25,6 @@ class CreateStripeCustomer implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->createCustomer($this->user);
+        $response = $this->createCustomer($this->user);
     }
 }

@@ -5,21 +5,20 @@ use App\Enums\Status;
 use App\Models\StripeProduct;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Stripe\StripeClient;
 
 trait Stripe
 {
-    public $client;
-    public function __construct()
-    {
-        $this->client = new StripeClient(env('STRIPE_PRIVATE_KEY'));
+    public function getApiClient() {
+        return new StripeClient(Config::get('app.stripe_private_key'));
     }
 
     public function createProduct($data)
     {
         // Create a product
         try {
-            $client = $this->client;
+            $client = $this->getApiClient();
             $product = $client->products->create([
                 'name' => $data['name'],
             ])->jsonSerialize();
@@ -48,27 +47,27 @@ trait Stripe
     {
         // Create a product
         try {
-            $client = $this->client;
-
+            $client = $this->getApiClient();
             $customer = $client->customers->create([
                 'description' => 'Created via browser',
                 'name' => $user->name,
                 'email' => $user->email
             ]);
+
             $user->stripe_customer_id = $customer->id;
             $user->save();
 
-            return ['data' => $user, 'status' => Status::SUCCESS(), 'message' => 'Customer has been added successfully.'];
+            return ['data' => $user, 'status' => Status::SUCCESS, 'message' => 'Customer has been added successfully.'];
 
         } catch (\Throwable $th) {
-            return ['data' => [], 'status' => Status::ERROR(), 'message' => $th->getMessage()];
+            return ['data' => [], 'status' => Status::ERROR, 'message' => $th->getMessage()];
         }
     }
 
     public function createPrice($product, $data)
     {
         try {
-            $client = $this->client;
+            $client = $this->getApiClient();
             $productPriceData = [
                 'unit_amount' => $data['default_price'],
                 'currency' => 'usd',
@@ -88,12 +87,12 @@ trait Stripe
 
     public function retriveStripeClient()
     {
-        return $this->client;
+        return $this->getApiClient();
     }
 
     public function createStripePaymentIntent(StripeProduct $product)
     {
-        $client = $this->client;
+        $client = $this->getApiClient();
         $stripe_customer_id = null;
         $user = Auth::user();
         $stripe_customer_id = $user->stripe_customer_id;
