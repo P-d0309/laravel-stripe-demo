@@ -18,10 +18,10 @@ class AlertComponent extends Component
 
         if(is_array($alert)) {
             if(array_key_exists(Status::SUCCESS,$alert)) {
-                $this->alertType = 'alert-success';
+                $this->alertType = 'success';
                 $this->alertMessage = $alert[Status::SUCCESS];
             } else if(array_key_exists(Status::ERROR, $alert)) {
-                $this->alertType = 'alert-danger';
+                $this->alertType = 'error';
                 $this->alertMessage = $alert[Status::ERROR];
             }
         }
